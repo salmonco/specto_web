@@ -27,6 +27,7 @@ export default function SpecSend() {
   const fileUri = searchParams?.get("fileUri") ?? "";
   const fileName = searchParams?.get("fileName") ?? "";
   const accessToken = searchParams?.get("ac") ?? "";
+  const platform = searchParams?.get("platform") ?? "";
 
   const dataURLtoFile = (dataurl: string, fileName: string) => {
     const arr = dataurl.split(",");
@@ -46,7 +47,6 @@ export default function SpecSend() {
       alert("세션이 만료되었습니다.");
       return;
     }
-    alert("ac=" + accessToken);
     postData(JSON.parse(specPostReq), fileUri, fileName);
 
     async function postData(
@@ -54,18 +54,19 @@ export default function SpecSend() {
       fileUri: string,
       fileName: string
     ) {
-      alert("fileUri=" + fileUri + " and fileName=" + fileName);
+      alert("specPostReq=" + JSON.stringify(specPostReq));
       const formData = new FormData();
       const blob = new Blob([JSON.stringify(specPostReq)], {
         type: "application/json",
       });
       formData.append("specPostReq", blob);
       if (fileUri) {
+        alert("fileUri=" + fileUri + " and fileName=" + fileName);
         // formData.append("documentation", dataURLtoFile(fileBase64, fileName));
         const response = await fetch(fileUri);
-        const blob = await response.blob();
-        alert("blob=" + JSON.stringify(blob));
-        formData.append("documentation", blob);
+        const blobf = await response.blob();
+        alert("blobf=" + JSON.stringify(blobf));
+        formData.append("documentation", blobf);
       }
 
       try {
@@ -77,17 +78,16 @@ export default function SpecSend() {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        const json = await res.json();
-        alert("/api/v1/spec " + JSON.stringify(json));
+        alert("/api/v1/spec " + JSON.stringify(res));
 
         // if (window.ReactNativeWebView) {
         //   window.ReactNativeWebView.postMessage("success");
         // }
       } catch (error) {
-        console.error("Error 에러:", error);
+        alert("Error 에러:" + error);
       }
     }
   }, [specPostReq]);
 
-  return <div>hihi</div>;
+  return <div>loading...</div>;
 }
