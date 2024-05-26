@@ -23,7 +23,8 @@ interface SpecBase {
 export default function SpecSend() {
   const searchParams = useSearchParams();
   const specPostReq = searchParams?.get("specPostReq");
-  const fileBase64 = searchParams?.get("fileBase64") ?? "";
+  // const fileBase64 = searchParams?.get("fileBase64") ?? "";
+  const fileUri = searchParams?.get("fileUri") ?? "";
   const fileName = searchParams?.get("fileName") ?? "";
   const accessToken = searchParams?.get("ac") ?? "";
 
@@ -46,21 +47,25 @@ export default function SpecSend() {
       return;
     }
     alert("ac=" + accessToken);
-    postData(JSON.parse(specPostReq), fileBase64, fileName);
+    postData(JSON.parse(specPostReq), fileUri, fileName);
 
     async function postData(
       specPostReq: SpecPostReqBase,
-      fileBase64: string,
+      fileUri: string,
       fileName: string
     ) {
-      alert("fileBase64=" + fileBase64 + " and fileName=" + fileName);
+      alert("fileUri=" + fileUri + " and fileName=" + fileName);
       const formData = new FormData();
       const blob = new Blob([JSON.stringify(specPostReq)], {
         type: "application/json",
       });
       formData.append("specPostReq", blob);
-      if (fileBase64) {
-        formData.append("documentation", dataURLtoFile(fileBase64, fileName));
+      if (fileUri) {
+        // formData.append("documentation", dataURLtoFile(fileBase64, fileName));
+        const response = await fetch(fileUri);
+        const blob = await response.blob();
+        alert("blob=" + JSON.stringify(blob));
+        formData.append("documentation", blob);
       }
 
       try {
