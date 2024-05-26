@@ -25,6 +25,7 @@ export default function SpecSend() {
   const specPostReq = searchParams?.get("specPostReq");
   const fileBase64 = searchParams?.get("fileBase64") ?? "";
   const fileName = searchParams?.get("fileName") ?? "";
+  const accessToken = searchParams?.get("ac") ?? "";
 
   const dataURLtoFile = (dataurl: string, fileName: string) => {
     const arr = dataurl.split(",");
@@ -40,6 +41,11 @@ export default function SpecSend() {
 
   useEffect(() => {
     if (!specPostReq) return;
+    if (!accessToken) {
+      alert("세션이 만료되었습니다.");
+      return;
+    }
+    alert("ac=" + accessToken);
     postData(JSON.parse(specPostReq), fileBase64, fileName);
 
     async function postData(
@@ -63,8 +69,7 @@ export default function SpecSend() {
           body: formData,
           headers: {
             // "Content-Type": "multipart/form-data",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InhrcWpzc2xzZWs4MEBuYXZlci5jb20iLCJpYXQiOjE3MTY3MjQ3MzYsImV4cCI6MTcxNjcyNjUzNiwidHlwZSI6ImFjY2VzcyJ9.Qj7BCILySgLYX2atHNORH-TFGx_jW3EwR8oDXQyF2wg",
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         const json = await res.json();
