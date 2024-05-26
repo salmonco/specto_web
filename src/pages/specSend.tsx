@@ -23,7 +23,8 @@ interface SpecBase {
 export default function SpecSend() {
   const searchParams = useSearchParams();
   const specPostReq = searchParams?.get("specPostReq");
-  const documentation = searchParams?.get("documentation") ?? "";
+  const fileBase64 = searchParams?.get("fileBase64") ?? "";
+  const fileName = searchParams?.get("fileName") ?? "";
 
   const dataURLtoFile = (dataurl: string, fileName: string) => {
     const arr = dataurl.split(",");
@@ -39,20 +40,21 @@ export default function SpecSend() {
 
   useEffect(() => {
     if (!specPostReq) return;
-    postData(JSON.parse(specPostReq), documentation);
+    postData(JSON.parse(specPostReq), fileBase64, fileName);
 
     async function postData(
       specPostReq: SpecPostReqBase,
-      documentation: string | null
+      fileBase64: string,
+      fileName: string
     ) {
-      alert("documentation " + documentation);
+      alert("fileBase64=" + fileBase64 + " and fileName=" + fileName);
       const formData = new FormData();
       const blob = new Blob([JSON.stringify(specPostReq)], {
         type: "application/json",
       });
       formData.append("specPostReq", blob);
-      if (documentation) {
-        formData.append("documentation", documentation);
+      if (fileBase64) {
+        formData.append("documentation", dataURLtoFile(fileBase64, fileName));
       }
 
       try {
